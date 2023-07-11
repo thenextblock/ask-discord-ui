@@ -47,11 +47,13 @@ export const LangchainAiStream = async (
 
   let url = `${QA_CHAIN_API_HOST}`;
 
+  console.log('==> equest url: ', url);
+
   let question = messages[messages.length - 1].content;
   const request = {
     messages: messages,
     question: question,
-    maxdocs: '10',
+    maxdocs: '35',
     filter: {},
   };
 

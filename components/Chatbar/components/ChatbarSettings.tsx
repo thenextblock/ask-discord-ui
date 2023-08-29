@@ -42,19 +42,19 @@ export const ChatbarSettings = () => {
         <ClearConversations onClearConversations={handleClearConversations} />
       ) : null}
 
-      {/* <Import onImport={handleImportConversations} /> */}
+      <Import onImport={handleImportConversations} />
 
-      {/* <SidebarButton
+      <SidebarButton
         text={t('Export data')}
         icon={<IconFileExport size={18} />}
         onClick={() => handleExportData()}
-      /> */}
+      />
 
-      {/* <SidebarButton
+      <SidebarButton
         text={t('Settings')}
         icon={<IconSettings size={18} />}
         onClick={() => setIsSettingDialog(true)}
-      /> */}
+      />
 
       {!serverSideApiKeyIsSet ? (
         <Key apiKey={apiKey} onApiKeyChange={handleApiKeyChange} />

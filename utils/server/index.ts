@@ -30,6 +30,14 @@ export class OpenAIError extends Error {
   }
 }
 
+interface IRequest {
+  message: any;
+  question: string;
+  collection: string;
+  maxdocs: number;
+  filters: string[];
+}
+
 // The nextblock API is here
 export const LangchainAiStream = async (
   model: OpenAIModel,
@@ -50,11 +58,13 @@ export const LangchainAiStream = async (
   console.log('==> equest url: ', url);
 
   let question = messages[messages.length - 1].content;
-  const request = {
-    messages: messages,
+
+  const request: IRequest = {
+    message: messages,
     question: question,
-    maxdocs: '35',
-    filter: {},
+    collection: 'discord',
+    maxdocs: 450,
+    filters: [],
   };
 
   console.log('Request: ', request);

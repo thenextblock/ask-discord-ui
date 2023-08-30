@@ -1,5 +1,10 @@
 import { DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE } from '@/utils/app/const';
-import { LangchainAiStream, OpenAIError, OpenAIStream } from '@/utils/server';
+import {
+  LangchainAiStream,
+  OpenAIError,
+  OpenAIStream,
+  OpenAIStreamNEW,
+} from '@/utils/server';
 
 import { ChatBody, Message } from '@/types/chat';
 
@@ -20,11 +25,11 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log('Data -----------------------------------------------');
     // console.log('model', model);
-    console.log('messages', messages);
-    console.log('key', key);
-    console.log('prompt', prompt);
-    console.log('temperature', temperature);
-    console.log('-----------------------------------------------');
+    // console.log('messages', messages);
+    // console.log('key', key);
+    // console.log('prompt', prompt);
+    // console.log('temperature', temperature);
+    // console.log('-----------------------------------------------');
 
     await init((imports) => WebAssembly.instantiate(wasm, imports));
 
@@ -67,13 +72,22 @@ const handler = async (req: Request): Promise<Response> => {
 
     encoding.free();
 
-    const stream = await LangchainAiStream(
+    const stream = await OpenAIStreamNEW(
       model,
       promptToSend,
       temperatureToUse,
       key,
       messagesToSend,
     );
+
+    //
+    // const stream = await LangchainAiStream(
+    //   model,
+    //   promptToSend,
+    //   temperatureToUse,
+    //   key,
+    //   messagesToSend,
+    // );
 
     // const stream = await OpenAIStream(
     //   model,

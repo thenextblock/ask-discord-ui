@@ -126,6 +126,173 @@ export const LangchainAiStream = async (
   return text;
 };
 
+interface IRequest {
+  messages: any[] | undefined;
+  question: string;
+  collection: string;
+  filters: string[];
+  maxdocs: number;
+}
+
+interface IVectorresponse {
+  request?: IRequest;
+  response?: any;
+  vector?: Document[];
+  report?: any;
+}
+
+export const OpenAIStreamNEW = async (
+  model: OpenAIModel,
+  systemPrompt: string,
+  temperature: number,
+  key: string,
+  messages: Message[],
+) => {
+  console.log('===> OpenAIStreamNEW');
+  console.log('===> Messages: ', messages);
+
+  console.log(messages[messages.length - 1].content);
+  const question = messages[messages.length - 1].content;
+
+  // Vector Search -----------------------------------
+
+  const request: IRequest = {
+    messages: [],
+    question: question,
+    collection: 'discord',
+    filters: [],
+    maxdocs: 150,
+    message: undefined,
+  };
+
+  let vectorUri = `${QA_CHAIN_API_HOST}search/`;
+  const vectorSearchResponse = await fetch(vectorUri, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      ...request,
+    }),
+  });
+
+  if (!vectorSearchResponse.ok) {
+    throw new Error(vectorSearchResponse.statusText);
+  }
+
+  const vectorData = (await vectorSearchResponse.json())
+    .data as IVectorresponse;
+
+  let context = '';
+  vectorData.vector?.forEach((doc: any) => {
+    context = context + doc.pageContent + '\n';
+  });
+
+  console.log(
+    '// -------------------------------------***---------------------------------',
+  );
+  let prompt = `Use the following pieces of context to answer the question at the end. 
+                          If you don't know the answer, just say that you don't know, 
+                                    don't try to make up an answer. \n\n
+          ${context} \n\n
+          Question: ${request.question} \n\  Helpful Answer
+   `;
+
+  console.log('===>> prompt : ', prompt);
+
+  console.log(
+    '// -------------------------------------***---------------------------------',
+  );
+
+  // We sending only last message ... (recducing Context Size ....)
+  const messageToSend = [{ role: 'user', content: prompt }];
+
+  // OpenAI API call here -----------------------------------
+
+  let url = `${OPENAI_API_HOST}/v1/chat/completions`;
+  const res = await fetch(url, {
+    headers: {
+      'Content-Type': 'application/json',
+      ...(OPENAI_API_TYPE === 'openai' && {
+        Authorization: `Bearer ${key ? key : process.env.OPENAI_API_KEY}`,
+      }),
+      ...(OPENAI_API_TYPE === 'azure' && {
+        'api-key': `${key ? key : process.env.OPENAI_API_KEY}`,
+      }),
+      ...(OPENAI_API_TYPE === 'openai' &&
+        OPENAI_ORGANIZATION && {
+          'OpenAI-Organization': OPENAI_ORGANIZATION,
+        }),
+    },
+    method: 'POST',
+    body: JSON.stringify({
+      ...(OPENAI_API_TYPE === 'openai' && { model: model.id }),
+      messages: [
+        {
+          role: 'system',
+          content: systemPrompt,
+        },
+        ...messageToSend,
+      ],
+      max_tokens: 1000,
+      temperature: temperature,
+      stream: true,
+    }),
+  });
+
+  const encoder = new TextEncoder();
+  const decoder = new TextDecoder();
+
+  if (res.status !== 200) {
+    const result = await res.json();
+    if (result.error) {
+      throw new OpenAIError(
+        result.error.message,
+        result.error.type,
+        result.error.param,
+        result.error.code,
+      );
+    } else {
+      throw new Error(
+        `OpenAI API returned an error: ${
+          decoder.decode(result?.value) || result.statusText
+        }`,
+      );
+    }
+  }
+
+  const stream = new ReadableStream({
+    async start(controller) {
+      const onParse = (event: ParsedEvent | ReconnectInterval) => {
+        if (event.type === 'event') {
+          const data = event.data;
+          // console.log('data: ', data);
+          try {
+            const json = JSON.parse(data);
+            if (json.choices[0].finish_reason != null) {
+              controller.close();
+              return;
+            }
+            const text = json.choices[0].delta.content;
+            const queue = encoder.encode(text);
+            controller.enqueue(queue);
+          } catch (e) {
+            controller.error(e);
+          }
+        }
+      };
+
+      const parser = createParser(onParse);
+
+      for await (const chunk of res.body as any) {
+        parser.feed(decoder.decode(chunk));
+      }
+    },
+  });
+
+  return stream;
+};
+
 export const OpenAIStream = async (
   model: OpenAIModel,
   systemPrompt: string,

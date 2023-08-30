@@ -73,7 +73,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       if (selectedConversation) {
         let updatedConversation: Conversation;
 
-        console.log('===> selectedConversation', selectedConversation);
+        // console.log('===> selectedConversation', selectedConversation);
 
         if (deleteCount) {
           const updatedMessages = [...selectedConversation.messages];
@@ -91,7 +91,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           };
         }
 
-        console.log('updatedConversation', updatedConversation);
+        // console.log('updatedConversation', updatedConversation);
 
         homeDispatch({
           field: 'selectedConversation',
@@ -139,6 +139,9 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           signal: controller.signal,
           body,
         });
+
+        console.log('===> Chat response => ', response);
+
         if (!response.ok) {
           homeDispatch({ field: 'loading', value: false });
           homeDispatch({ field: 'messageIsStreaming', value: false });
@@ -228,6 +231,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           homeDispatch({ field: 'conversations', value: updatedConversations });
           saveConversations(updatedConversations);
           homeDispatch({ field: 'messageIsStreaming', value: false });
+
+          console.log('===> updatedConversation', updatedConversation);
         } else {
           const { answer } = await response.json();
           const updatedMessages: Message[] = [
@@ -243,6 +248,9 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
             value: updateConversation,
           });
           saveConversation(updatedConversation);
+
+          console.log('===> updatedConversation', updatedConversation);
+
           const updatedConversations: Conversation[] = conversations.map(
             (conversation) => {
               if (conversation.id === selectedConversation.id) {

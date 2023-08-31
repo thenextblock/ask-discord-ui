@@ -53,6 +53,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       modelError,
       loading,
       prompts,
+      maxVectorSearchResults,
     },
     handleUpdateConversation,
     dispatch: homeDispatch,
@@ -97,14 +98,21 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           field: 'selectedConversation',
           value: updatedConversation,
         });
+
         homeDispatch({ field: 'loading', value: true });
         homeDispatch({ field: 'messageIsStreaming', value: true });
+        homeDispatch({ field: 'maxVectorSearchResults', value: 10 });
+
+        let maxDocs = localStorage.getItem('maxDocs') || maxVectorSearchResults;
+        console.log('===> maxDocs', maxDocs);
+
         const chatBody: ChatBody = {
           model: updatedConversation.model,
           messages: updatedConversation.messages,
           key: apiKey,
           prompt: updatedConversation.prompt,
           temperature: updatedConversation.temperature,
+          maxDocs: maxDocs.toString(),
         };
 
         console.log('===> chatBody ==> ', chatBody);

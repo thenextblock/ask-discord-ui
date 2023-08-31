@@ -27,6 +27,7 @@ export interface HomeInitialState {
   defaultModelId: OpenAIModelID | undefined;
   serverSideApiKeyIsSet: boolean;
   serverSidePluginKeysSet: boolean;
+  maxVectorSearchResults: number;
 }
 
 export const initialState: HomeInitialState = {
@@ -42,13 +43,14 @@ export const initialState: HomeInitialState = {
   selectedConversation: undefined,
   currentMessage: undefined,
   prompts: [],
-  temperature: 1,
+  temperature: 0,
   showPromptbar: true,
   showChatbar: true,
   currentFolder: undefined,
   messageError: false,
   searchTerm: '',
   defaultModelId: undefined,
-  serverSideApiKeyIsSet: true,
+  serverSideApiKeyIsSet: false,
   serverSidePluginKeysSet: false,
+  maxVectorSearchResults: 100,
 };

@@ -20,16 +20,8 @@ export const config = {
 
 const handler = async (req: Request): Promise<Response> => {
   try {
-    const { model, messages, key, prompt, temperature } =
+    const { model, messages, key, prompt, temperature, maxDocs } =
       (await req.json()) as ChatBody;
-
-    console.log('Data -----------------------------------------------');
-    // console.log('model', model);
-    // console.log('messages', messages);
-    // console.log('key', key);
-    // console.log('prompt', prompt);
-    // console.log('temperature', temperature);
-    // console.log('-----------------------------------------------');
 
     await init((imports) => WebAssembly.instantiate(wasm, imports));
 
@@ -40,8 +32,6 @@ const handler = async (req: Request): Promise<Response> => {
     );
 
     let promptToSend = prompt;
-
-    console.log('promptToSend: ', promptToSend);
 
     if (!promptToSend) {
       promptToSend = DEFAULT_SYSTEM_PROMPT;
@@ -72,13 +62,19 @@ const handler = async (req: Request): Promise<Response> => {
 
     encoding.free();
 
+    // return new Response('ok');
+    console.log('Max Docs before send', maxDocs);
+
     const stream = await OpenAIStreamNEW(
       model,
       promptToSend,
       temperatureToUse,
       key,
       messagesToSend,
+      parseInt(maxDocs),
     );
+
+    return new Response(stream);
 
     //
     // const stream = await LangchainAiStream(
@@ -96,8 +92,6 @@ const handler = async (req: Request): Promise<Response> => {
     //   key,
     //   messagesToSend,
     // );
-
-    return new Response(stream);
   } catch (error) {
     console.error(error);
     if (error instanceof OpenAIError) {

@@ -1,5 +1,6 @@
 import { IconExternalLink } from '@tabler/icons-react';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { parseMutationArgs } from 'react-query/types/core/utils';
 
 import { useTranslation } from 'next-i18next';
 
@@ -9,6 +10,13 @@ import HomeContext from '@/pages/api/home/home.context';
 
 export const ModelSelect = () => {
   const { t } = useTranslation('chat');
+  const [maxDocs, setMaxDocs] = useState<number>(10);
+
+  useEffect(() => {
+    let _maxDocs = parseInt(localStorage.getItem('maxDocs') || '10');
+    console.log('Max Docs: ', _maxDocs, localStorage.getItem('maxDocs'));
+    setMaxDocs(_maxDocs);
+  }, [maxDocs]);
 
   const {
     state: { selectedConversation, models, defaultModelId },
@@ -50,6 +58,22 @@ export const ModelSelect = () => {
             </option>
           ))}
         </select>
+      </div>
+      <div className="w-full mt-3 text-left text-neutral-700 dark:text-neutral-400 flex items-center">
+        Max Vector search results: &nbsp;{' '}
+        <input
+          type="number"
+          min="1"
+          max="500"
+          defaultValue={maxDocs}
+          value={maxDocs}
+          className="w-18"
+          onChange={(e) => {
+            console.log('Max Doc value changed: ', e.target.value);
+            setMaxDocs(parseInt(e.target.value));
+            localStorage.setItem('maxDocs', e.target.value);
+          }}
+        />
       </div>
       <div className="w-full mt-3 text-left text-neutral-700 dark:text-neutral-400 flex items-center">
         <a

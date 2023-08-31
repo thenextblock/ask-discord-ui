@@ -147,6 +147,7 @@ export const OpenAIStreamNEW = async (
   temperature: number,
   key: string,
   messages: Message[],
+  maxDocs: number,
 ) => {
   console.log('===> OpenAIStreamNEW');
   console.log('===> Messages: ', messages);
@@ -161,9 +162,11 @@ export const OpenAIStreamNEW = async (
     question: question,
     collection: 'discord',
     filters: [],
-    maxdocs: 150,
+    maxdocs: maxDocs,
     message: undefined,
   };
+
+  console.log('===>> request : ', request);
 
   let vectorUri = `${QA_CHAIN_API_HOST}search/`;
   const vectorSearchResponse = await fetch(vectorUri, {

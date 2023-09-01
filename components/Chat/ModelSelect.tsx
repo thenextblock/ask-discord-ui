@@ -10,11 +10,55 @@ import HomeContext from '@/pages/api/home/home.context';
 
 export const ModelSelect = () => {
   const { t } = useTranslation('chat');
+
   const [maxDocs, setMaxDocs] = useState<number>(10);
+
+  let backupChannels = [
+    'aave',
+    'arbitrum',
+    'blockswap',
+    'compound',
+    'curve',
+    'erigon',
+    'ethereum-rd',
+    'flashbots',
+    'l2beat',
+    'lido',
+    'roketpool',
+    'thegraph',
+    'uniswap',
+  ];
+
+  let savedChannels = localStorage.getItem('savedChannels')
+    ? JSON.parse(localStorage.getItem('savedChannels') as string)
+    : [];
+
+  let initialChannels = backupChannels.map((channel) => ({
+    channel,
+    checked: savedChannels.includes(channel),
+  }));
+
+  const [channels, setChannels] = useState(initialChannels);
+
+  const handleChannelChange = (channelName: string) => {
+    setChannels((prevChannels) => {
+      const updatedChannels = prevChannels.map((channel) =>
+        channel.channel === channelName
+          ? { ...channel, checked: !channel.checked }
+          : channel,
+      );
+
+      const checkedChannels = updatedChannels
+        .filter((channelObj) => channelObj.checked)
+        .map((channelObj) => channelObj.channel);
+      localStorage.setItem('savedChannels', JSON.stringify(checkedChannels));
+
+      return updatedChannels;
+    });
+  };
 
   useEffect(() => {
     let _maxDocs = parseInt(localStorage.getItem('maxDocs') || '10');
-    console.log('Max Docs: ', _maxDocs, localStorage.getItem('maxDocs'));
     setMaxDocs(_maxDocs);
   }, [maxDocs]);
 
@@ -75,6 +119,23 @@ export const ModelSelect = () => {
           }}
         />
       </div>
+
+      <div className="my-4">
+        {channels.map((channel, index) => (
+          <div key={channel.channel}>
+            <input
+              type="checkbox"
+              id={`channel-${index}`} // unique id based on the index
+              checked={channel.checked}
+              onChange={() => handleChannelChange(channel.channel)}
+            />
+            <label htmlFor={`channel-${index}`} className="text-red-500">
+              {channel.channel}
+            </label>
+          </div>
+        ))}
+      </div>
+
       <div className="w-full mt-3 text-left text-neutral-700 dark:text-neutral-400 flex items-center">
         <a
           href="https://platform.openai.com/account/usage"

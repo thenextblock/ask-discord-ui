@@ -14,6 +14,7 @@ export interface ChatBody {
   prompt: string;
   temperature: number;
   maxDocs: string;
+  savedChannels: string[];
 }
 
 export interface Conversation {

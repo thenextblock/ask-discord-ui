@@ -148,6 +148,7 @@ export const OpenAIStreamNEW = async (
   key: string,
   messages: Message[],
   maxDocs: number,
+  savedChannels: string[],
 ) => {
   console.log('===> OpenAIStreamNEW');
   console.log('===> Messages: ', messages);
@@ -161,14 +162,15 @@ export const OpenAIStreamNEW = async (
     messages: [],
     question: question,
     collection: 'discord',
-    filters: [],
+    filters: savedChannels,
     maxdocs: maxDocs,
     message: undefined,
   };
 
-  console.log('===>> request : ', request);
+  console.log('===> request : ', request);
 
   let vectorUri = `${QA_CHAIN_API_HOST}search/`;
+
   const vectorSearchResponse = await fetch(vectorUri, {
     method: 'POST',
     headers: {
@@ -187,13 +189,17 @@ export const OpenAIStreamNEW = async (
     .data as IVectorresponse;
 
   let context = '';
+
   vectorData.vector?.forEach((doc: any) => {
     context = context + doc.pageContent + '\n';
   });
 
+  console.log('===>> Vector response : ', vectorData.report);
+
   console.log(
     '// -------------------------------------***---------------------------------',
   );
+
   let prompt = `Use the following pieces of context to answer the question at the end. 
                           If you don't know the answer, just say that you don't know, 
                                     don't try to make up an answer. \n\n
@@ -202,7 +208,6 @@ export const OpenAIStreamNEW = async (
    `;
 
   console.log('===>> prompt : ', prompt);
-
   console.log(
     '// -------------------------------------***---------------------------------',
   );
@@ -213,6 +218,7 @@ export const OpenAIStreamNEW = async (
   // OpenAI API call here -----------------------------------
 
   let url = `${OPENAI_API_HOST}/v1/chat/completions`;
+
   const res = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',

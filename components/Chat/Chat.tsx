@@ -103,7 +103,12 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         homeDispatch({ field: 'messageIsStreaming', value: true });
         homeDispatch({ field: 'maxVectorSearchResults', value: 10 });
 
+        // reading From the localstorage
         let maxDocs = localStorage.getItem('maxDocs') || maxVectorSearchResults;
+        let savedChannels = localStorage.getItem('savedChannels')
+          ? JSON.parse(localStorage.getItem('savedChannels') as string)
+          : [];
+
         console.log('===> maxDocs', maxDocs);
 
         const chatBody: ChatBody = {
@@ -113,6 +118,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           prompt: updatedConversation.prompt,
           temperature: updatedConversation.temperature,
           maxDocs: maxDocs.toString(),
+          savedChannels,
         };
 
         console.log('===> chatBody ==> ', chatBody);

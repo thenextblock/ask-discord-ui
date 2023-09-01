@@ -20,8 +20,15 @@ export const config = {
 
 const handler = async (req: Request): Promise<Response> => {
   try {
-    const { model, messages, key, prompt, temperature, maxDocs } =
-      (await req.json()) as ChatBody;
+    const {
+      model,
+      messages,
+      key,
+      prompt,
+      temperature,
+      maxDocs,
+      savedChannels,
+    } = (await req.json()) as ChatBody;
 
     await init((imports) => WebAssembly.instantiate(wasm, imports));
 
@@ -72,11 +79,11 @@ const handler = async (req: Request): Promise<Response> => {
       key,
       messagesToSend,
       parseInt(maxDocs),
+      savedChannels,
     );
 
     return new Response(stream);
 
-    //
     // const stream = await LangchainAiStream(
     //   model,
     //   promptToSend,

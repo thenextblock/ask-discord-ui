@@ -14,19 +14,20 @@ export const ModelSelect = () => {
   const [maxDocs, setMaxDocs] = useState<number>(10);
 
   let backupChannels = [
-    'aave',
-    'arbitrum',
-    'blockswap',
-    'compound',
-    'curve',
+    'LBEAT',
+    'Compound',
+    'AaveCommunity',
+    'graphprotocol',
+    'Blockswap',
+    'CurveFinance',
     'erigon',
-    'ethereum-rd',
-    'flashbots',
-    'l2beat',
-    'lido',
-    'roketpool',
-    'thegraph',
-    'uniswap',
+    'Lido',
+    'EthRD',
+    'Arbitrum',
+    'Uniswap',
+    'RocketPool',
+    'Flashbots',
+    'LayerZeroOfficial',
   ];
 
   let savedChannels = localStorage.getItem('savedChannels')
@@ -129,7 +130,8 @@ export const ModelSelect = () => {
               checked={channel.checked}
               onChange={() => handleChannelChange(channel.channel)}
             />
-            <label htmlFor={`channel-${index}`} className="text-red-500">
+            <label htmlFor={`channel-${index}`} className="text-black">
+              {' '}
               {channel.channel}
             </label>
           </div>

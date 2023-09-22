@@ -28,6 +28,9 @@ export const ModelSelect = () => {
     'RocketPool',
     'Flashbots',
     'LayerZeroOfficial',
+    'CryptoDevHub',
+    'Secureum',
+    'Optimism',
   ];
 
   let savedChannels = localStorage.getItem('savedChannels')
@@ -105,7 +108,7 @@ export const ModelSelect = () => {
         </select>
       </div>
       <div className="w-full mt-3 text-left text-neutral-700 dark:text-neutral-400 flex items-center">
-        Max Vector search results: &nbsp;{' '}
+        Max Docs in search results: &nbsp;{' '}
         <input
           type="number"
           min="1"
@@ -114,7 +117,6 @@ export const ModelSelect = () => {
           value={maxDocs}
           className="w-18"
           onChange={(e) => {
-            console.log('Max Doc value changed: ', e.target.value);
             setMaxDocs(parseInt(e.target.value));
             localStorage.setItem('maxDocs', e.target.value);
           }}

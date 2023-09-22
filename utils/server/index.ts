@@ -70,7 +70,6 @@ export const OpenAIStreamNEW = async (
     collection: 'discord',
     filters: savedChannels,
     maxdocs: maxDocs,
-    message: undefined,
     model: model.id,
   };
 
@@ -113,7 +112,7 @@ export const OpenAIStreamNEW = async (
           Question: ${request.question} \n\  Helpful Answer
    `;
 
-  console.log('===> Prompt : ');
+  // console.log('===> Prompt : ');
   console.log('// ----------------------***------------------ //');
 
   // We sending only last message ... (recducing Context Size ....)

@@ -328,6 +328,7 @@ export const LangchainAiStream = async (
     collection: 'discord',
     maxdocs: 450,
     filters: [],
+    model: model.id,
   };
 
   console.log('Request: ', request);

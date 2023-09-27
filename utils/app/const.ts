@@ -6,7 +6,7 @@ export const DEFAULT_SYSTEM_PROMPT =
 //   process.env.QA_CHAIN_API_HOST || 'http://localhost:5000/api/v1/';
 
 export const QA_CHAIN_API_HOST =
-  process.env.QA_CHAIN_API_HOST || 'https://qna.thenextblock.com/api/v1/';
+  process.env.QA_CHAIN_API_HOST || 'https://w3search.thenextblock.com/api/v1/';
 
 export const OPENAI_API_HOST =
   process.env.OPENAI_API_HOST || 'https://api.openai.com';

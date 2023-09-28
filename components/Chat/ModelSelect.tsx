@@ -13,24 +13,35 @@ export const ModelSelect = () => {
 
   const [maxDocs, setMaxDocs] = useState<number>(10);
 
-  let backupChannels = [
+  const backupChannels = [
     'LBEAT',
     'Compound',
     'AaveCommunity',
-    'graphprotocol',
-    'Blockswap',
-    'CurveFinance',
-    'erigon',
     'Lido',
     'EthRD',
+    'Flashbots',
+    'erigon',
+    'graphprotocol',
+    'CurveFinance',
+    'RocketPool',
+    'LayerZeroOfficial',
     'Arbitrum',
     'Uniswap',
-    'RocketPool',
-    'Flashbots',
-    'LayerZeroOfficial',
-    'CryptoDevHub',
-    'Secureum',
+    'Blockswap',
     'Optimism',
+    'ChainlinkOfficial',
+    'Secureum',
+    'CryptoDevHub',
+    'EigenLayer',
+    'Nethermind',
+    'Ethpool',
+    'PocketNetwork',
+    'Synthetix',
+    'goethereum',
+    'ethstaker',
+    'PrysmEthereumClient',
+    'StreamingFast',
+    'Lighthouse',
   ];
 
   let savedChannels = localStorage.getItem('savedChannels')
@@ -62,7 +73,7 @@ export const ModelSelect = () => {
   };
 
   useEffect(() => {
-    let _maxDocs = parseInt(localStorage.getItem('maxDocs') || '10');
+    let _maxDocs = parseInt(localStorage.getItem('maxDocs') || '130');
     setMaxDocs(_maxDocs);
   }, [maxDocs]);
 
@@ -87,7 +98,8 @@ export const ModelSelect = () => {
       <label className="mb-2 text-left text-neutral-700 dark:text-neutral-400">
         {t('Model')}
       </label>
-      <div className="w-full rounded-lg border border-neutral-200 bg-transparent pr-2 text-neutral-900 dark:border-neutral-600 dark:text-white">
+      {/* <div className="w-full rounded-lg border border-neutral-200 bg-transparent pr-2 text-neutral-900 dark:border-neutral-600 dark:text-white"> */}
+      <div className="w-full rounded-lg border border-neutral-200 bg-transparent pr-2 text-neutral-900 dark:border-neutral-600 dark:text-white overflow-auto">
         <select
           className="w-full bg-transparent p-2"
           placeholder={t('Select a model') || ''}
